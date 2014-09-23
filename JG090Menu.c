@@ -1,51 +1,97 @@
 /**************************************************************************************************/
-/* Copyright (C)  SSE@USTC, 2014-2015                                                             */
+/* Copyright (C) mc2lab.com, SSE@USTC, 2014-2015                                                  */
 /*                                                                                                */
-/*  FILE NAME             :  JG090Main.c                                                          */
-/*  PRINCIPAL AUTHOR      :  zhuyiliang                                                           */
-/*  STUDENT NUMBER        :  JG14225090                                                           */
-/*  SUBSYSTEM NAME        :  JG090Main                                                            */
-/*  MODULE NAME           :  DataOperate                                                          */
+/*  FILE NAME             :  JG090menu.c                                                          */
+/*  PRINCIPAL AUTHOR      :  Zhuyiliang                                                           */
+/*  SUBSYSTEM NAME        :  Menu                                                                 */
+/*  MODULE NAME           :  Menu                                                                 */
 /*  LANGUAGE              :  C                                                                    */
 /*  TARGET ENVIRONMENT    :  ANY                                                                  */
 /*  DATE OF FIRST RELEASE :  2014/09/22                                                           */
-/*  DESCRIPTION           :  This is a Main program                                               */
+/*  DESCRIPTION           :  This is a menu program                                               */
 /**************************************************************************************************/
 
 /*
  * Revision log:
  *
- * Created by zhuyiliang, 2014/09/22
+ * Created by Zhuyiliang   , 2014/09/22
  *
  */
 
-#include<stdlib.h>
-#include<stdio.h>
-#include<string.h>
-#include "DataOperate.h"
-#include "MenuProgram.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include "menu.h"
+#include "linktable.h"
 
 #define CMD_MAX_LEN 128
 
+tLinkTable *Node;
 
-void main()
+int getHelp()
 {
-    /* cmd line begins */
+    showAllCmd(Node);
+    return 1;
+}
+
+/***translate char* variable into int variable ************************************************************/
+int StringToInt(const char *s)
+{   
+    int n = 0;   
+    int i = 0;   
+    while (s[i] != '\0')    
+    {        
+        n *= 10;        
+        n += s[i] - '0';
+        i++;    
+    }    
+    return n;
+}
+
+tDataNode menu[] =
+{
+    {NULL,"help", "this is help!","help you find cmd", getHelp},
+    {NULL,"version", "menu's version.", "zhuyiliang_v1", NULL},
+   
+   
+};
+
+
+main()
+{
+   /* cmd line begins */  
+    Node=changeToLinkTable(menu);
+    printf("Hint: Please Input a cmd, and exit by input 'exit'\n");
     while(1)
     {
         char cmd[CMD_MAX_LEN];
-        printf("Input a cmd > ");
+        tDataNode *p;
+        printf("menu> ");
         scanf("%s", cmd);
-        tDataNode *p = FindCmd(head, cmd);
-        if(p == NULL)
+        if(cmd == NULL) 
         {
-            printf("This is a wrong cmd!\n");
+            printf("This is a wrong cmd\n");
             continue;
         }
-        printf("%s - %s\n", p->cmd, p->desc);
-        if(p->handler != NULL)
+        if(!strcmp(cmd, "exit")) 
         {
-            p->handler();
+            return 0;
+        }
+        p=getByCmd(Node,cmd); 
+        if(p!=NULL)
+        {
+            printf("%s - %s - %s\n", p->cmd, p->desc, p->value);
+            if(p->handler != NULL)
+            {
+                p->handler();
+            } 
+        }
+	else
+        {
+            printf("This is a wrong cmd\n");
+            continue;
         }
     }
 }
+
+
