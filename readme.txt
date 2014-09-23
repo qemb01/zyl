@@ -5,6 +5,6 @@
 班级：软设2班
 
 
-编译：gcc fmenu.c linktable.c menu.c -o Menu
+编译：gcc JG090menu.c linktable.c menu.c -o Menu
 
 运行：./Menu
